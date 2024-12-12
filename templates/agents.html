@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Manage Agents</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+        }
+
+        .navbar {
+            margin-bottom: 20px;
+        }
+
+        .agent-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .card {
+            width: 250px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .card img {
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .card h3 {
+            margin: 15px 0 5px 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .prompt-editor {
+            display: none; /* Initially hidden */
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .prompt-editor textarea {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .prompt-editor button {
+            width: 100%;
+        }
+
+        /* Create Agent Form */
+        #create-agent-form {
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: none; /* Hidden initially */
+        }
+
+        .btn-create {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Manage Agents</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a href="/logout" class="btn btn-outline-success">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Button to Show/Hide Create Agent Form -->
+        <div class="text-center">
+            <button type="button" class="btn btn-primary btn-create" onclick="toggleCreateForm()">Create New Agent</button>
+        </div>
+
+        <!-- Create Agent Form -->
+        <form method="POST" action="{{ url_for('agents') }}" id="create-agent-form">
+            <h4 class="text-center mb-3">Create New Agent</h4>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="name">Agent Name</label>
+                    <input type="text" name="name" class="form-control" id="name" placeholder="Enter Agent Name" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="image_url">Image URL</label>
+                    <input type="text" name="image_url" class="form-control" id="image_url" placeholder="Enter Image URL">
+                </div>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-success">Add Agent</button>
+            </div>
+        </form>
+
+        <!-- Existing Agents -->
+        <h2 class="text-center my-4">Existing Agents</h2>
+        <div class="agent-list">
+            {% for agent in agents %}
+            <div class="card" onclick="togglePromptEditor('{{ agent.id }}')">
+                <img src="{{ agent.image_url or 'https://via.placeholder.com/250x150' }}" alt="Agent Picture">
+                <h3>{{ agent.name }}</h3>
+                {% if agent.prompt %}
+                <p>{{ agent.prompt }}</p>
+                {% else %}
+                <p class="text-muted">No prompt assigned</p>
+                {% endif %}
+                <div class="prompt-editor" id="prompt-editor-{{ agent.id }}">
+                    <form method="POST" action="{{ url_for('update_agent_prompt', agent_id=agent.id) }}">
+                        <textarea name="prompt" class="form-control" rows="3" placeholder="Enter new prompt">{{ agent.prompt }}</textarea>
+                        <button type="submit" class="btn btn-primary">Update Prompt</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        // Toggle visibility of the create agent form
+        function toggleCreateForm() {
+            const form = document.getElementById('create-agent-form');
+            form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
+        }
+
+        // Toggle visibility of the prompt editor
+        function togglePromptEditor(agentId) {
+            document.querySelectorAll('.prompt-editor').forEach(editor => {
+                editor.style.display = 'none'; // Close all editors
+            });
+            const editor = document.getElementById(`prompt-editor-${agentId}`);
+            editor.style.display = editor.style.display === 'none' || editor.style.display === '' ? 'block' : 'none';
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>

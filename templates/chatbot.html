@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot with Modern Design</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Dark Animated Gradient Background */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            background: linear-gradient(-45deg, #232526, #414345, #000000, #2b2b2b);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating Objects with Shadow */
+        .floating-object {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.3);
+            animation: float 20s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0) scale(1);
+            }
+            50% {
+                transform: translateY(-50px) translateX(20px) scale(1.2);
+            }
+            100% {
+                transform: translateY(0) translateX(0) scale(1);
+            }
+        }
+
+        /* Position Floating Objects */
+        .object-1 {
+            width: 100px;
+            height: 100px;
+            top: 10%;
+            left: 25%;
+            animation-delay: 0s;
+        }
+
+        .object-2 {
+            width: 80px;
+            height: 80px;
+            top: 40%;
+            left: 75%;
+            animation-delay: 5s;
+        }
+
+        .object-3 {
+            width: 120px;
+            height: 120px;
+            bottom: 15%;
+            right: 20%;
+            animation-delay: 3s;
+        }
+
+        /* Centered Text */
+        .centered-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            font-size: 3em;
+            font-weight: bold;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Chatbot Icon */
+        .chatbot-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            border: none;
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px 5px rgba(255, 223, 0, 0.6);
+            cursor: pointer;
+            z-index: 1000;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .chatbot-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px 10px rgba(255, 223, 0, 0.8);
+        }
+
+        .chatbot-icon img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Chat Screen */
+        .chat-screen {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 350px;
+            max-height: 500px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideUp 0.5s ease forwards;
+            z-index: 1000;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .chat-header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 18px;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+
+        #messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+
+        .chat-message {
+            margin-bottom: 10px;
+        }
+
+        .chat-message.user {
+            text-align: right;
+        }
+
+        .chat-message p {
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 15px;
+            margin: 0;
+        }
+
+        .chat-message.bot p {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .chat-message.user p {
+            background-color: #e5e5e5;
+        }
+
+        .chat-input {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            background-color: white;
+        }
+
+        .chat-input textarea {
+            flex: 1;
+            height: 40px;
+            resize: none;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        .chat-input button {
+            margin-left: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .chat-input button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Objects -->
+    <div class="floating-object object-1"></div>
+    <div class="floating-object object-2"></div>
+    <div class="floating-object object-3"></div>
+
+    <!-- Centered Text -->
+    <div class="centered-text">
+        Welcome to {{agent.name}} Website
+    </div>
+
+    <!-- Chatbot Icon -->
+    <div class="chatbot-icon" onclick="toggleChat()">
+        <img id="chatbot-image" src="{{ agent.image_url or 'https://via.placeholder.com/70' }}" alt="Chatbot">
+    </div>
+
+    <!-- Chat Screen -->
+    <div class="chat-screen" id="chat-screen">
+        <div class="chat-header">
+            Chat Assistant
+        </div>
+        <div id="messages"></div>
+        <div class="chat-input">
+            <textarea id="user-message" placeholder="Type your message..."></textarea>
+            <button id="send-message">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // Toggle chat screen visibility
+        function toggleChat() {
+            const chatScreen = document.getElementById('chat-screen');
+            chatScreen.style.display = chatScreen.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        document.getElementById('send-message').addEventListener('click', () => {
+            const userMessage = document.getElementById('user-message').value.trim();
+            const agentId = new URLSearchParams(window.location.search).get('agent_id');
+
+            if (!userMessage) return;
+
+            // Display user message
+            const messagesDiv = document.getElementById('messages');
+            const userMsgDiv = document.createElement('div');
+            userMsgDiv.classList.add('chat-message', 'user');
+            userMsgDiv.innerHTML = `<p>${userMessage}</p>`;
+            messagesDiv.appendChild(userMsgDiv);
+
+            // Clear input
+            document.getElementById('user-message').value = '';
+
+            // Send to server
+            fetch(`/chatbot?agent_id=${agentId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_message: userMessage }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const botMsgDiv = document.createElement('div');
+                    botMsgDiv.classList.add('chat-message', 'bot');
+                    botMsgDiv.innerHTML = `<p>${data.response || "Sorry, I couldn't process your request."}</p>`;
+                    messagesDiv.appendChild(botMsgDiv);
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    const errorDiv = document.createElement('div');
+                    errorDiv.classList.add('chat-message', 'bot');
+                    errorDiv.innerHTML = `<p>Error: Unable to connect to the chatbot.</p>`;
+                    messagesDiv.appendChild(errorDiv);
+                });
+        });
+    </script>
+</body>
+</html>
